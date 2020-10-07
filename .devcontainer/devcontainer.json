@@ -1,0 +1,56 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.106.0/containers/typescript-node-12
+{
+  "name": "contract",
+  "build": {
+    "dockerfile": "Dockerfile",
+    // Update 'VARIANT' to pick a Node version: 10, 12, 14
+    "args": { "VARIANT": "12" }
+  },
+
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.shell.linux": "/usr/bin/zsh",
+    "solidity.packageDefaultDependenciesContractsDirectory": "",
+    "solidity.packageDefaultDependenciesDirectory": "contracts/Library",
+    "solidity.linter": "solhint",
+    "solidity.compileUsingRemoteVersion": "",
+    "solidity.enableLocalNodeCompiler": true,
+    "workbench.colorCustomizations": {},
+    "editor.defaultFormatter": null,
+    "editor.formatOnSave": true,
+    "[javascript]": {
+      "editor.formatOnSave": true
+    },
+    "[typescript]": {
+      "editor.formatOnSave": true
+    },
+    "[solidity]": {
+      "editor.formatOnSave": true
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
+  },
+
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "tintinweb.graphviz-interactive-preview",
+    "esbenp.prettier-vscode",
+    "juanblanco.solidity",
+    "tintinweb.solidity-visual-auditor",
+    "ms-vscode.vscode-typescript-tslint-plugin",
+    "github.vscode-pull-request-github"
+  ],
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "mkdir -p /root/.ssh && cp -r /root/.ssh-localhost/* /root/.ssh && chmod 700 /root/.ssh && chmod 600 /root/.ssh/* && echo \"export PATH=/root/.solc-select:${PATH}\" >> ~/.zshrc",
+  "runArgs": ["-v", "${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-localhost:ro"]
+
+  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+  // "remoteUser": "node"
+}
