@@ -4,7 +4,7 @@
   "description": "coffee",
   "main": "index.js",
   "scripts": {
-    "build": "waffle",
+    "build": "buidler compile",
     "test": "export NODE_ENV=test && npx buidler --network ganache test",
     "coverage": "npx buidler coverage --network coverage",
     "docs": "scripts/docs.sh",

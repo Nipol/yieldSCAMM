@@ -2,8 +2,8 @@ import { task, usePlugin } from '@nomiclabs/buidler/config';
 
 usePlugin('@nomiclabs/buidler-waffle');
 usePlugin('@nomiclabs/buidler-solhint');
+// usePlugin('@nomiclabs/buidler-ganache');
 usePlugin('buidler-ethers-v5');
-usePlugin('@nomiclabs/buidler-ganache');
 usePlugin('solidity-coverage');
 
 // This is a sample Buidler task. To learn how to create your own go to
@@ -20,7 +20,7 @@ export default {
   defaultNetwork: 'buidlerevm',
   networks: {
     buidlerevm: {
-      gas: 12000000,
+      gas: 9000000,
       blockGasLimit: 12000000,
     },
     coverage: {
