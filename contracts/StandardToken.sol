@@ -28,6 +28,8 @@ contract StandardToken is
     uint8 private _decimals;
     uint256 private _totalSupply = 0;
 
+    uint256 private bases = 1e27;
+
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
 
