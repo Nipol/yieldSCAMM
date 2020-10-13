@@ -6,6 +6,14 @@ library SafeMath {
     uint256 public constant RAY = 1e27;
     uint256 public constant RAD = 1e45;
 
+    function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x <= y ? x : y;
+    }
+
+    function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x >= y ? x : y;
+    }
+
     function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
         require((z = x + y) >= x, "Math/Add-Overflow");
     }
