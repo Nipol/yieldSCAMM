@@ -7,6 +7,7 @@ import "./Interface/IERC173.sol";
 import "./Interface/IERC1271.sol";
 import "./Interface/IERC2612.sol";
 import "./Interface/Iinitialize.sol";
+import "./Interface/IScaleFactor.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Address.sol";
 import "./Library/Authority.sol";
@@ -26,9 +27,10 @@ contract StandardToken is
     string private _name;
     string private _symbol;
     uint8 private _decimals;
-    uint256 private _totalSupply = 0;
+    uint256 private _totalCredit = 0;
 
-    mapping(address => uint256) private _balances;
+    mapping(address => uint256) private _credits;
+
     mapping(address => mapping(address => uint256)) private _allowances;
 
     // for ERC1271
@@ -70,7 +72,8 @@ contract StandardToken is
     }
 
     function totalSupply() external override view returns (uint256) {
-        return _totalSupply;
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        return _totalCredit.mul(factor);
     }
 
     function transfer(address to, uint256 value)
@@ -79,11 +82,15 @@ contract StandardToken is
         returns (bool)
     {
         require(to != address(this), "ERC20/Not-Allowed-Transfer");
-        _balances[msg.sender] = _balances[msg.sender].sub(
-            value,
+
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+
+        _credits[msg.sender] = _credits[msg.sender].sub(
+            tmpCredit,
             "ERC20/Not-Enough-Balance"
         );
-        _balances[to] = _balances[to].add(value);
+        _credits[to] = _credits[to].add(tmpCredit);
 
         emit Transfer(msg.sender, to, value);
         return true;
@@ -95,15 +102,18 @@ contract StandardToken is
         uint256 value
     ) external override returns (bool) {
         require(to != address(this), "ERC20/Not-Allowed-Transfer");
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+
         _allowances[from][msg.sender] = _allowances[from][msg.sender].sub(
             value,
             "ERC20/Not-Enough-Allowance"
         );
-        _balances[from] = _balances[from].sub(
-            value,
+        _credits[from] = _credits[from].sub(
+            tmpCredit,
             "ERC20/Not-Enough-Balance"
         );
-        _balances[to] = _balances[to].add(value);
+        _credits[to] = _credits[to].add(tmpCredit);
 
         emit Transfer(from, to, value);
         return true;
@@ -126,7 +136,8 @@ contract StandardToken is
         view
         returns (uint256)
     {
-        return _balances[target];
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        return _credits[target].mul(factor);
     }
 
     function allowance(address target, address spender)
@@ -139,18 +150,26 @@ contract StandardToken is
     }
 
     function mint(uint256 value) external onlyAuthority returns (bool) {
-        _totalSupply = _totalSupply.add(value);
-        _balances[msg.sender] = _balances[msg.sender].add(value);
-        emit Transfer(address(0), msg.sender, value);
+        return this.mintTo(value, msg.sender);
+    }
+
+    function mintTo(uint256 value, address target) external onlyAuthority returns (bool) {
+        _totalCredit = _totalCredit.add(value);
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+        _credits[target] = _credits[target].add(tmpCredit);
+        emit Transfer(address(0), target, value);
         return true;
     }
 
     function burn(uint256 value) external onlyAuthority returns (bool) {
-        _balances[msg.sender] = _balances[msg.sender].sub(
-            value,
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+        _credits[msg.sender] = _credits[msg.sender].sub(
+            tmpCredit,
             "ERC20/Not-Enough-Balance"
         );
-        _totalSupply = _totalSupply.sub(value);
+        _totalCredit = _totalCredit.sub(value);
         emit Transfer(msg.sender, address(0), value);
         return true;
     }

@@ -2,5 +2,5 @@
 pragma solidity ^0.6.0;
 
 interface IScaleFactor {
-    function factor() public view returns (uint256);
+    function factor() external view returns (uint256);
 }
