@@ -7,8 +7,6 @@ import "./Interface/IBurn.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Authority.sol";
 
-import "@nomiclabs/buidler/console.sol";
-
 contract SCAMM is Authority {
     using SafeMath for uint256;
 
@@ -22,6 +20,11 @@ contract SCAMM is Authority {
     // Scale Factor Ratio Decimals
     uint256 private constant BASE = 1e27;
 
+    uint256 private FEE;
+    // 10000 -> 100%
+    // 00005 -> 5
+    uint256 private FEE_BASE = 1e4;
+
     // 토큰이 추가 되었을 경우 호출되는 이벤트
     event AddToken(address token);
 
@@ -29,12 +32,13 @@ contract SCAMM is Authority {
     event RemoveToken(address token);
 
     // 거버넌스, lp, 그리고 초기에 구성될 토큰들의 주소
-    constructor(address governance, address lpt, address[] memory tokens) public {
+    constructor(address governance, address lpt, address[] memory tokens, uint256 fee) public {
         LPToken = lpt;
         for (uint256 i = 0; tokens.length > i; i++) {
             addStable(tokens[i]);
         }
         Authority.initialize(governance);
+        FEE = fee;
     }
 
     // 리스팅 할 Token 추가하는 함수
@@ -119,10 +123,23 @@ contract SCAMM is Authority {
         // 원하지 않는 토큰 수량은, 다른 토큰으로 교환 되어야 함.
     }
 
-    function swap(address token1, uint256 amount1, address token2, uint256 amount2) private {
+    function swap(address tokenIn, uint256 amountIn, address tokenOut, uint256 amountInOut) private returns (bool) {
         // 토큰 유효성 검사
-        // 토큰 밸런스 검사
+        require(allowedToken[tokenIn] && allowedToken[tokenOut], "SCAMM/Already-Exist-Addr");
+        // 가지고 나가고자 하는 AMM이 가지고 있는 토큰 밸런스 검사
+        require(IERC20(tokenOut).balanceOf(address(this)) >= amountOut, "SCAMM/Not-Enough-Balance");
         // 교환 수수료
+
+    }
+
+    function simulate(address tokenIn, uint256 amountIn, address tokenOut, uint256 amountOut) external view returns (uint256 requireOut) {
+        address[] memory tmpStables = stables;
+        uint256 realBalance = 0;
+        for (uint256 i = 0; tmpStables.length > i; i++) {
+            realBalance = realBalance.add(
+                IERC20(tmpStables[i]).balanceOf(address(this))
+            );
+        }
     }
 
     function weightedCollateral() private view returns (uint256 collateral) {
