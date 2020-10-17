@@ -8,6 +8,7 @@ import "./Interface/IERC1271.sol";
 import "./Interface/IERC2612.sol";
 import "./Interface/Iinitialize.sol";
 import "./Interface/IScaleFactor.sol";
+import "./Interface/ICredit.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Address.sol";
 import "./Library/Authority.sol";
@@ -19,7 +20,8 @@ contract StandardToken is
     IERC20,
     IERC165,
     IERC2612,
-    Iinitialize
+    Iinitialize,
+    ICredit
 {
     using SafeMath for uint256;
     using Address for address;
@@ -27,7 +29,7 @@ contract StandardToken is
     string private _name;
     string private _symbol;
     uint8 private _decimals;
-    uint256 private _totalCredit = 0;
+    uint256 private _totalCredit;
 
     mapping(address => uint256) private _credits;
 
@@ -74,6 +76,10 @@ contract StandardToken is
     function totalSupply() external override view returns (uint256) {
         uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
         return _totalCredit.mul(factor);
+    }
+
+    function totalCredit() external view returns (uint256) {
+        return _totalCredit;
     }
 
     function transfer(address to, uint256 value)
@@ -153,7 +159,11 @@ contract StandardToken is
         return this.mintTo(value, msg.sender);
     }
 
-    function mintTo(uint256 value, address target) external onlyAuthority returns (bool) {
+    function mintTo(uint256 value, address target)
+        external
+        onlyAuthority
+        returns (bool)
+    {
         _totalCredit = _totalCredit.add(value);
         uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
         uint256 tmpCredit = value.div(factor);

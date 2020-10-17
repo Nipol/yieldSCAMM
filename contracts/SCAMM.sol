@@ -4,6 +4,7 @@ pragma solidity ^0.6.0;
 import "./Interface/IERC20.sol";
 import "./Interface/IMint.sol";
 import "./Interface/IBurn.sol";
+import "./Interface/ICredit.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Authority.sol";
 
@@ -72,8 +73,8 @@ contract SCAMM is Authority {
         uint256 collateral = weightedCollateral();
 
         if (collateral > 0) {
-            return
-                IERC20(LPToken).totalSupply().mul(BASE).div(collateral).sub(1);
+            uint256 credit = ICredit(LPToken).totalCredit();
+            return collateral.divWithPrecision(credit, BASE).sub(1);
         }
         return BASE;
     }
@@ -115,6 +116,13 @@ contract SCAMM is Authority {
             IERC20(LPToken).balanceOf(msg.sender) >= amountLP,
             "SCAMM/Not-Enough-Balance"
         );
+        // amount에 따른 LP 회수
+        require(
+            IERC20(LPToken).transferFrom(msg.sender, address(this), amountLP),
+            "SCAMM/Not-Allowance"
+        );
+        // LP 소각
+        require(IBurn(LPToken).burn(amountLP), "SCAMM/Impossible-Burn");
         // 소각하고자 하는 amount와 동일한 Token 수량들이 필요함.
         address[] memory tmpStables = stables;
         uint256 dividedBalance = amountLP.div(tmpStables.length);
@@ -128,13 +136,6 @@ contract SCAMM is Authority {
             // 토큰 전송
             IERC20(tmpStables[i]).transfer(msg.sender, finalAmount);
         }
-        // amount에 따른 LP 회수
-        require(
-            IERC20(LPToken).transferFrom(msg.sender, address(this), amountLP),
-            "SCAMM/Not-Allowance"
-        );
-        // LP 소각
-        require(IBurn(LPToken).burn(amountLP), "SCAMM/Impossible-Burn");
     }
 
     // 토큰을 소각하고 원하는 토큰 하나로 돌려받는 것.
@@ -144,6 +145,7 @@ contract SCAMM is Authority {
             "SCAMM/Not-Enough-Balance"
         );
 
+        // 총 출금하고자 하는 특정한 토큰의 수량 기록
         uint256 withdrawBalance;
 
         address[] memory tmpStables = stables;
@@ -160,6 +162,14 @@ contract SCAMM is Authority {
                 getAmountOut(tmpStables[i], finalAmount, token)
             );
         }
+        // amount에 따른 LP 회수
+        require(
+            IERC20(LPToken).transferFrom(msg.sender, address(this), amountLP),
+            "SCAMM/Not-Allowance"
+        );
+        // LP 소각
+        require(IBurn(LPToken).burn(amountLP), "SCAMM/Impossible-Burn");
+        // 교환하고자 하는 토큰 전송
         require(
             IERC20(token).transfer(msg.sender, withdrawBalance),
             "SCAMM/What-Happen"
@@ -174,7 +184,7 @@ contract SCAMM is Authority {
         // 토큰 유효성 검사
         require(
             allowedToken[tokenIn] && allowedToken[tokenOut],
-            "SCAMM/Already-Exist-Addr"
+            "SCAMM/Not-Supported-Token"
         );
 
         // 토큰 가지고 나갈 수량
