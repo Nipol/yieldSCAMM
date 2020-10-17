@@ -126,7 +126,7 @@ contract SCAMM is Authority {
             // 최종적으로 가중치가 적용된 실제 token balance 산정
             uint256 finalAmount = dividedBalance.mul(precision).div(1e18);
             // 토큰 전송
-            IERC20(tmpStables).transfer(msg.sender, finalAmount);
+            IERC20(tmpStables[i]).transfer(msg.sender, finalAmount);
         }
         // amount에 따른 LP 회수
         require(
@@ -161,7 +161,7 @@ contract SCAMM is Authority {
             );
         }
         require(
-            IERC20(tokenOut).transfer(msg.sender, withdrawBalance),
+            IERC20(token).transfer(msg.sender, withdrawBalance),
             "SCAMM/What-Happen"
         );
     }
@@ -202,7 +202,7 @@ contract SCAMM is Authority {
         address tokenIn,
         uint256 amountIn,
         address tokenOut
-    ) external view returns (uint256 amountOut) {
+    ) public view returns (uint256 amountOut) {
         uint256 reserveIn = IERC20(tokenIn).balanceOf(address(this));
         uint256 reserveOut = IERC20(tokenOut).balanceOf(address(this));
 
@@ -232,22 +232,22 @@ contract SCAMM is Authority {
     }
 
     // not yet
-    function weightedRatio(address token)
-        private
-        view
-        returns (uint256 ratio)
-    {
-        address[] memory tmpStables = stables;
-        uint256 realBalance = 0;
-        uint256 dividedBalance = 0;
-        for (uint256 i = 0; tmpStables.length > i; i++) {
-            realBalance = realBalance.add(
-                IERC20(tmpStables[i]).balanceOf(address(this))
-            );
-        }
+    // function weightedRatio(address token)
+    //     private
+    //     view
+    //     returns (uint256 ratio)
+    // {
+    //     address[] memory tmpStables = stables;
+    //     uint256 realBalance = 0;
+    //     uint256 dividedBalance = 0;
+    //     for (uint256 i = 0; tmpStables.length > i; i++) {
+    //         realBalance = realBalance.add(
+    //             IERC20(tmpStables[i]).balanceOf(address(this))
+    //         );
+    //     }
 
-        dividedBalance = realBalance.div(tmpStables.length);
-        uint256 balance = IERC20(tmpStables[i]).balanceOf(address(this));
-        ratio = dividedBalance.divWithPrecision(balance, BASE);
-    }
+    //     dividedBalance = realBalance.div(tmpStables.length);
+    //     uint256 balance = IERC20(tmpStables[i]).balanceOf(address(this));
+    //     ratio = dividedBalance.divWithPrecision(balance, BASE);
+    // }
 }
