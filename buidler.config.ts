@@ -35,7 +35,7 @@ export default {
     version: '0.6.12',
     optimizer: {
       enabled: true,
-      runs: 99999999,
+      runs: 9999999,
     },
   },
   paths: {

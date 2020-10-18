@@ -6,6 +6,14 @@ library SafeMath {
     uint256 public constant RAY = 1e27;
     uint256 public constant RAD = 1e45;
 
+    function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x <= y ? x : y;
+    }
+
+    function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = x >= y ? x : y;
+    }
+
     function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
         require((z = x + y) >= x, "Math/Add-Overflow");
     }
@@ -41,7 +49,7 @@ library SafeMath {
         uint256 y,
         uint256 precision
     ) internal pure returns (uint256 z) {
-        z = add(mul(x, y), precision / 2) / precision;
+        z = div(add(mul(x, y), div(precision / 2)), precision);
     }
 
     function divWithPrecision(
@@ -49,7 +57,7 @@ library SafeMath {
         uint256 y,
         uint256 precision
     ) internal pure returns (uint256 z) {
-        z = add(mul(x, precision), y / 2) / y;
+        z = div(add(mul(x, precision), div(y, 2)), y);
     }
 
     function toPrecision(uint256 wad, uint256 precision)
