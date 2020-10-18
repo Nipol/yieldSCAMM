@@ -49,7 +49,7 @@ library SafeMath {
         uint256 y,
         uint256 precision
     ) internal pure returns (uint256 z) {
-        z = add(mul(x, y), precision / 2) / precision;
+        z = div(add(mul(x, y), div(precision / 2)), precision);
     }
 
     function divWithPrecision(
@@ -57,7 +57,7 @@ library SafeMath {
         uint256 y,
         uint256 precision
     ) internal pure returns (uint256 z) {
-        z = add(mul(x, precision), y / 2) / y;
+        z = div(add(mul(x, precision), div(y, 2)), y);
     }
 
     function toPrecision(uint256 wad, uint256 precision)

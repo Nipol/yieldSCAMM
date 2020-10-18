@@ -3,21 +3,27 @@ pragma solidity ^0.6.0;
 
 import "./Interface/IERC20.sol";
 import "./Interface/IERC165.sol";
+import "./Interface/IERC173.sol";
 import "./Interface/IERC1271.sol";
 import "./Interface/IERC2612.sol";
 import "./Interface/Iinitialize.sol";
+import "./Interface/IScaleFactor.sol";
+import "./Interface/ICredit.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Address.sol";
 import "./Library/Authority.sol";
 import "./Library/EIP712.sol";
 
-contract StandardToken is
+import "@nomiclabs/buidler/console.sol";
+
+contract ScaleToken is
     Authority,
     EIP712,
     IERC20,
     IERC165,
     IERC2612,
-    Iinitialize
+    Iinitialize,
+    ICredit
 {
     using SafeMath for uint256;
     using Address for address;
@@ -25,9 +31,10 @@ contract StandardToken is
     string private _name;
     string private _symbol;
     uint8 private _decimals;
-    uint256 private _totalSupply = 0;
+    uint256 private _totalCredit;
 
-    mapping(address => uint256) private _balances;
+    mapping(address => uint256) private _credits;
+
     mapping(address => mapping(address => uint256)) private _allowances;
 
     // for ERC1271
@@ -56,20 +63,25 @@ contract StandardToken is
         _decimals = decimals;
     }
 
-    function name() external override view returns (string memory) {
+    function name() external view override returns (string memory) {
         return _name;
     }
 
-    function symbol() external override view returns (string memory) {
+    function symbol() external view override returns (string memory) {
         return _symbol;
     }
 
-    function decimals() external override view returns (uint8) {
+    function decimals() external view override returns (uint8) {
         return _decimals;
     }
 
-    function totalSupply() external override view returns (uint256) {
-        return _totalSupply;
+    function totalSupply() external view override returns (uint256) {
+        uint256 factor = IScaleFactor(this.owner()).factor();
+        return _totalCredit.mulWithPrecision(factor, 1e18);
+    }
+
+    function totalCredit() external view override returns (uint256) {
+        return _totalCredit;
     }
 
     function transfer(address to, uint256 value)
@@ -78,11 +90,15 @@ contract StandardToken is
         returns (bool)
     {
         require(to != address(this), "ERC20/Not-Allowed-Transfer");
-        _balances[msg.sender] = _balances[msg.sender].sub(
-            value,
+
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+
+        _credits[msg.sender] = _credits[msg.sender].sub(
+            tmpCredit,
             "ERC20/Not-Enough-Balance"
         );
-        _balances[to] = _balances[to].add(value);
+        _credits[to] = _credits[to].add(tmpCredit);
 
         emit Transfer(msg.sender, to, value);
         return true;
@@ -94,15 +110,18 @@ contract StandardToken is
         uint256 value
     ) external override returns (bool) {
         require(to != address(this), "ERC20/Not-Allowed-Transfer");
+        uint256 factor = IScaleFactor(this.owner()).factor().div(1e18);
+        uint256 tmpCredit = value.div(factor);
+
         _allowances[from][msg.sender] = _allowances[from][msg.sender].sub(
             value,
             "ERC20/Not-Enough-Allowance"
         );
-        _balances[from] = _balances[from].sub(
-            value,
+        _credits[from] = _credits[from].sub(
+            tmpCredit,
             "ERC20/Not-Enough-Balance"
         );
-        _balances[to] = _balances[to].add(value);
+        _credits[to] = _credits[to].add(tmpCredit);
 
         emit Transfer(from, to, value);
         return true;
@@ -121,17 +140,22 @@ contract StandardToken is
 
     function balanceOf(address target)
         external
-        override
         view
+        override
         returns (uint256)
     {
-        return _balances[target];
+        uint256 factor = IScaleFactor(this.owner()).factor();
+        return _credits[target].mulWithPrecision(factor, 1e18);
+    }
+
+    function creditOf(address target) external view returns (uint256) {
+        return _credits[target];
     }
 
     function allowance(address target, address spender)
         external
-        override
         view
+        override
         returns (uint256)
     {
         return _allowances[target][spender];
@@ -141,23 +165,27 @@ contract StandardToken is
         return this.mintTo(value, msg.sender);
     }
 
-    function mintTo(uint256 value, address target)
+    function mintTo(uint256 credit, address target)
         external
         onlyAuthority
         returns (bool)
     {
-        _totalSupply = _totalSupply.add(value);
-        _balances[target] = _balances[target].add(value);
+        uint256 factor = IScaleFactor(this.owner()).factor();
+        uint256 value = credit.mul(factor).div(1e18);
+        _totalCredit = _totalCredit.add(credit);
+        _credits[target] = _credits[target].add(credit);
         emit Transfer(address(0), target, value);
         return true;
     }
 
-    function burn(uint256 value) external returns (bool) {
-        _balances[msg.sender] = _balances[msg.sender].sub(
-            value,
+    function burn(uint256 credit) external onlyAuthority returns (bool) {
+        uint256 factor = IScaleFactor(this.owner()).factor();
+        uint256 value = credit.mul(factor).div(1e18);
+        _credits[msg.sender] = _credits[msg.sender].sub(
+            credit,
             "ERC20/Not-Enough-Balance"
         );
-        _totalSupply = _totalSupply.sub(value);
+        _totalCredit = _totalCredit.sub(credit);
         emit Transfer(msg.sender, address(0), value);
         return true;
     }
@@ -232,8 +260,8 @@ contract StandardToken is
 
     function supportsInterface(bytes4 interfaceID)
         external
-        override
         view
+        override
         returns (bool)
     {
         return

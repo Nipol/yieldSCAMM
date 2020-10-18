@@ -8,6 +8,8 @@ import "./Interface/ICredit.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Authority.sol";
 
+import "@nomiclabs/buidler/console.sol";
+
 contract SCAMM is Authority {
     using SafeMath for uint256;
 
@@ -19,7 +21,7 @@ contract SCAMM is Authority {
     mapping(address => bool) public allowedToken;
 
     // Scale Factor Ratio Decimals
-    uint256 private constant BASE = 1e27;
+    uint256 private constant BASE = 1e18;
 
     uint256 private FEE;
     // 10000 -> 100%
@@ -40,10 +42,10 @@ contract SCAMM is Authority {
         uint256 fee
     ) public {
         LPToken = lpt;
+        Authority.initialize(governance);
         for (uint256 i = 0; tokens.length > i; i++) {
             addStable(tokens[i]);
         }
-        Authority.initialize(governance);
         FEE = fee;
     }
 
@@ -68,49 +70,74 @@ contract SCAMM is Authority {
     }
 
     // 발행된 LPToken과의 수량을 통해 ScaleFactor를 반환함.
-    // @return RAY
+    // @return WAD
     function factor() external view returns (uint256) {
+        // 총 담보물의 수량 1e18
         uint256 collateral = weightedCollateral();
 
         if (collateral > 0) {
+            // 토큰에 기록된 크레딧의 수량 1e18
             uint256 credit = ICredit(LPToken).totalCredit();
-            return collateral.divWithPrecision(credit, BASE).sub(1);
+            // first credit
+            if (credit == 0) return BASE;
+            // 크레딧이 기본적으로 수량이 적기 때문에,
+            return collateral.divWithPrecision(credit, BASE);
         }
         return BASE;
     }
 
     // 등록 가능한 토큰을 예치하는 함수
+    //@TODO - except fee for initial Supplyer
     function deposit(address[] memory tokens, uint256[] memory amounts)
         public
     {
+        uint256 beforeFactor = this.factor();
         // 토큰이 예치되기 전에 발생한 총 자산의 비율
         uint256 beforeCollateral = weightedCollateral();
+        // console.log("before %s", beforeCollateral);
 
-        for (uint256 i = 0; i > tokens.length; i++) {
+        for (uint256 i = 0; tokens.length > i; i++) {
             // 토큰 허용 체크
-            require(
-                allowedToken[tokens[i]] == true,
-                "SCAMM/Not-Allowed-Token"
-            );
+            require(allowedToken[tokens[i]], "SCAMM/Not-Allowed-Token");
             // 토큰 실질 전송
             require(
                 IERC20(tokens[i]).transferFrom(
                     msg.sender,
                     address(this),
                     amounts[i]
-                )
+                ),
+                "SCAMM/What-Happen"
             );
         }
 
         // 토큰이 예치된 이후의 총 자산 비율
-        uint256 afterCollateral = weightedCollateral();
+        uint256 newAmount = weightedCollateral();
+        // console.log("after %s", newAmount);
 
-        uint256 newAmount = afterCollateral.sub(beforeCollateral);
+        if (beforeCollateral != 0) {
+            newAmount = newAmount.sub(beforeCollateral);
+            // console.log("newAmount %s", newAmount);
+            newAmount = newAmount.mul(FEE_BASE.sub(FEE)).div(FEE_BASE);
+            // console.log("newAmount without fee %s", newAmount);
+            newAmount = newAmount.div(beforeFactor).mul(1e18);
+            // console.log("factored newAmount %s", newAmount);
+        }
 
         IMint(LPToken).mintTo(newAmount, msg.sender);
+
+        // uint256 newAmount = afterCollateral.sub(beforeCollateral);
+        // uint256 fee = newAmount.mul(FEE_BASE.sub(FEE)).div(FEE_BASE);
+        // console.log("newAmount %s", newAmount);
+        // console.log("newAmount without fee %s", newAmount.sub(fee));
+
+        // 이 수수료 누적을 토큰 추가 발행 전에 Factor에 반영하여야 함.
+        // newAmount = newAmount.mul(beforeFactor).div(1e18);
+
+        // IMint(LPToken).mintTo(newAmount, msg.sender);
     }
 
     // 토큰을 소각하고 토큰을 고루 돌려받는 것.
+    // @TODO - 소각 fee 산정할 것
     function withdraw(uint256 amountLP) public {
         require(
             IERC20(LPToken).balanceOf(msg.sender) >= amountLP,
@@ -139,6 +166,7 @@ contract SCAMM is Authority {
     }
 
     // 토큰을 소각하고 원하는 토큰 하나로 돌려받는 것.
+    // @TODO - 소각 fee 산정할 것
     function withdrawToken(uint256 amountLP, address token) public {
         require(
             IERC20(LPToken).balanceOf(msg.sender) >= amountLP,
@@ -176,6 +204,7 @@ contract SCAMM is Authority {
         );
     }
 
+    // @TODO - 재사용 가능한 형태로 인자 처리
     function swap(
         address tokenIn,
         uint256 amountIn,
@@ -219,25 +248,35 @@ contract SCAMM is Authority {
         uint256 amountInWithFee = amountIn.mul(FEE_BASE.sub(FEE));
         uint256 numerator = amountInWithFee.mul(reserveOut);
         uint256 denominator = reserveIn.mul(FEE_BASE).add(amountInWithFee);
-        amountOut = numerator / denominator;
+        amountOut = numerator.div(denominator);
     }
 
-    function weightedCollateral() private view returns (uint256 collateral) {
+    function weightedCollateral() public view returns (uint256 collateral) {
         address[] memory tmpStables = stables;
         uint256 realBalance = 0;
         uint256 dividedBalance = 0;
+        collateral = 0;
         for (uint256 i = 0; tmpStables.length > i; i++) {
             realBalance = realBalance.add(
                 IERC20(tmpStables[i]).balanceOf(address(this))
             );
         }
 
-        dividedBalance = realBalance.div(tmpStables.length);
+        if (realBalance > 0) {
+            dividedBalance = realBalance.div(tmpStables.length);
+            for (uint256 i = 0; tmpStables.length > i; i++) {
+                uint256 balance = IERC20(tmpStables[i]).balanceOf(
+                    address(this)
+                );
+                uint256 precision = BASE;
+                precision = dividedBalance.mul(BASE).add(balance.div(2)).div(
+                    balance
+                );
+                collateral = collateral.add(balance.mul(precision).div(BASE));
 
-        for (uint256 i = 0; tmpStables.length > i; i++) {
-            uint256 balance = IERC20(tmpStables[i]).balanceOf(address(this));
-            uint256 precision = dividedBalance.divWithPrecision(balance, BASE);
-            collateral = collateral.add(balance.mul(precision).div(BASE));
+                // console.log(precision);
+                // console.log(collateral);
+            }
         }
     }
 
