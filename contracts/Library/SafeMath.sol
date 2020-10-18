@@ -49,7 +49,7 @@ library SafeMath {
         uint256 y,
         uint256 precision
     ) internal pure returns (uint256 z) {
-        z = div(add(mul(x, y), div(precision / 2)), precision);
+        z = div(add(mul(x, y), div(precision, 2)), precision);
     }
 
     function divWithPrecision(
