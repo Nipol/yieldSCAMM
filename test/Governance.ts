@@ -1,33 +1,28 @@
-// We import Chai to use its asserting functions here.
-const { expect } = require('chai');
+import { expect, use } from 'chai';
+import { ethers } from '@nomiclabs/buidler';
+import { Contract, Signer, Wallet, ContractFactory, utils } from 'ethers';
 
-// `describe` is a Mocha function that allows you to organize your tests. It's
-// not actually needed, but having your tests organized makes debugging them
-// easier. All Mocha functions are available in the global scope.
 describe('Gov contract', function () {
-  // A common pattern is to declare some variables, and assign them in the
-  // `before` and `beforeEach` callbacks.
-  let provider = ethers.getDefaultProvider();
-  let Governance;
-  let ScammGov;
-  let scamm = new ethers.Wallet('0x' + 'a'.repeat(64), provider);
-  let governors;
-  let powers;
-  let owner;
-  let addr1;
-  let addr2;
-  let addr3;
-  let addr4;
+  let GovFactory: ContractFactory;
+  let ScammGov: Contract;
+  let scamm: Wallet;
+  scamm = new Wallet('0x' + 'a'.repeat(64));
+  
+  let governors: string[];
+  let powers: number[];
+  let owner: Signer, addr1: Signer, addr2: Signer, addr3: Signer, addr4: Signer;
+  let ownerAddr: string, addr1Addr: string, addr2Addr: string, addr3Addr: string, addr4Addr: string;
 
+  let totalPower: number;
   let dummybytes32 = '0xc4ad000000000000000000000000000000000000000000000000000000000001';
   let reqNumerator = 2;
   let reqDenominator = 3;
 
-  // `beforeEach` will run before each test, re-deploying the contract every
-  // time. It receives a callback, which can be async.
   beforeEach(async function () {
-    Governance = await ethers.getContractFactory('Governance');
+    GovFactory = await ethers.getContractFactory('Governance');
+
     [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+
     ownerAddr = await owner.getAddress();
     addr1Addr = await addr1.getAddress();
     addr2Addr = await addr2.getAddress();
@@ -37,23 +32,15 @@ describe('Gov contract', function () {
     governors = [ownerAddr, addr1Addr, addr2Addr];
     powers = [10, 5, 1];
     totalPower = powers[0] + powers[1] + powers[2];
-    consensus = [reqNumerator, reqDenominator];
+    var consensus = [reqNumerator, reqDenominator];
 
-    // To deploy our contract, we just have to call Token.deploy() and await
-    // for it to be deployed(), which happens onces its transaction has been
-    // mined.
-    ScammGov = await Governance.deploy(scamm.address, governors, powers, consensus);
+    ScammGov = await GovFactory.deploy(scamm.address, governors, powers, consensus);
     await ScammGov.deployed();
   });
 
-  // You can nest describe calls to create subsections.
   describe('Deploy', function () {
-    // `it` is another Mocha function. This is the one you use to define your
-    // tests. It receives the test name, and a callback function.
-
-    // If the callback function is async, Mocha will `await` it.
     it('Should initialize gov contract correctly', async function () {
-      govs = await ScammGov.getGovernors();
+      var govs = await ScammGov.getGovernors();
       expect(govs[0]).to.equal(governors[0]);
       expect(govs[1]).to.equal(governors[1]);
       expect(govs[2]).to.equal(governors[2]);
@@ -76,12 +63,13 @@ describe('Gov contract', function () {
   describe('Transactions', function () {
     it('Should create a transaction', async function () {
       await ScammGov.connect(addr2).createTransaction(scamm.address, 0, 'test', dummybytes32); // consensus not reached yet
-      tx = await ScammGov.getTransaction(0);
+      var tx = await ScammGov.getTransaction(0);
       expect(tx.destination).to.equal(scamm.address);
     });
 
     it('Should confirm and execute a transaction', async function () {
       await ScammGov.connect(addr2).createTransaction(scamm.address, 0, 'test', dummybytes32); // consensus not reached yet
+      var tx = await ScammGov.getTransaction(0);
       expect(tx.executed).to.equal(false);
 
       await ScammGov.connect(owner).confirmTransaction(0); // consensus reached as the voted power is >66%
@@ -93,16 +81,18 @@ describe('Gov contract', function () {
   describe('Manage governors', function () {
     it('Should add new governor', async function () {
       //check current governors
-      govs = await ScammGov.getGovernors();
-      numGovs = await ScammGov.governorsCount();
+      var govs = await ScammGov.getGovernors();
+      var numGovs = await ScammGov.governorsCount();
       expect(govs.length).to.equal(numGovs);
       expect(govs.length).to.equal(3);
 
+      // let ut: utils;
+
       //build bytes data
-      sig = 'setGovernor(address,uint256)';
-      newGovAddrBytes = ethers.utils.hexZeroPad(addr3Addr, 32);
-      newGovPower = '0x0000000000000000000000000000000000000000000000000000000000000003';
-      data = ethers.utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [newGovAddrBytes, newGovPower]);
+      var sig = 'setGovernor(address,uint256)';
+      var newGovAddrBytes = utils.zeroPad(addr3Addr, 32);
+      var newGovPower = '0x0000000000000000000000000000000000000000000000000000000000000003';
+      var data = utils.defaultAbiCoder.encode(['bytes32', 'bytes32'], [newGovAddrBytes, newGovPower]);
 
       // create tx that calls setGovernor()
       await ScammGov.connect(owner).createTransaction(ScammGov.address, 0, sig, data); // consensus not reached yet
@@ -122,15 +112,15 @@ describe('Gov contract', function () {
     });
 
     it('Should remove governor', async function () {
-      govs = await ScammGov.getGovernors();
-      numGovs = await ScammGov.governorsCount();
+      var govs = await ScammGov.getGovernors();
+      var numGovs = await ScammGov.governorsCount();
       expect(govs.length).to.equal(numGovs);
       expect(govs.length).to.equal(3);
 
       //build bytes data
-      sig = 'removeGovernor(address)';
-      targetGovAddrBytes = ethers.utils.hexZeroPad(addr2Addr, 32);
-      data = ethers.utils.defaultAbiCoder.encode(['bytes32'], [targetGovAddrBytes]);
+      var sig = 'removeGovernor(address)';
+      var targetGovAddrBytes = utils.zeroPad(addr2Addr, 32);
+      var data = utils.defaultAbiCoder.encode(['bytes32'], [targetGovAddrBytes]);
 
       // create tx that calls removeGovernor()
       await ScammGov.connect(owner).createTransaction(ScammGov.address, 0, sig, data); // consensus not reached yet
