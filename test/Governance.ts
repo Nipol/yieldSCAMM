@@ -30,11 +30,11 @@ describe('Gov contract', function () {
     addr4Addr = await addr4.getAddress();
 
     governors = [ownerAddr, addr1Addr, addr2Addr];
-    powers = [10, 5, 1];
+    powers = [10, 5, 4];
     totalPower = powers[0] + powers[1] + powers[2];
     var consensus = [reqNumerator, reqDenominator];
 
-    ScammGov = await GovFactory.deploy(scamm.address, governors, powers, consensus);
+    ScammGov = await GovFactory.deploy(governors, powers, consensus);
     await ScammGov.deployed();
   });
 
@@ -117,17 +117,16 @@ describe('Gov contract', function () {
       expect(govs.length).to.equal(numGovs);
       expect(govs.length).to.equal(3);
 
-      //build bytes data
+      //build bytes data to remove addr1 from governors
       var sig = 'removeGovernor(address)';
-      var targetGovAddrBytes = utils.zeroPad(addr2Addr, 32);
+      var targetGovAddrBytes = utils.zeroPad(addr1Addr, 32);
       var data = utils.defaultAbiCoder.encode(['bytes32'], [targetGovAddrBytes]);
 
       // create tx that calls removeGovernor()
       await ScammGov.connect(owner).createTransaction(ScammGov.address, 0, sig, data); // consensus not reached yet
-      await ScammGov.connect(addr1).confirmTransaction(0); // consensus reached
+      await ScammGov.connect(addr2).confirmTransaction(0); // consensus reached
 
-      // await ScammGov.removeGovernor(addr2Addr)
-      expect(await ScammGov.isGovernor(addr2Addr)).to.equal(false);
+      expect(await ScammGov.isGovernor(addr1Addr)).to.equal(false);
       expect(await ScammGov.governorsCount()).to.equal(2);
     });
   });

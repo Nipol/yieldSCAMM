@@ -27,13 +27,12 @@ contract Governance is IERC2767 {
 
     address[] governors;
 
+    /// @dev sum of voting powers of governors
     uint256 public override totalPower;
     mapping(address => uint256) powers;
 
     /// @dev Transaction confirmation given by individual governors
     mapping(uint256 => mapping(address => bool)) confirmation;
-
-    ScammInterface public scamm;
 
     modifier onlyGovernor() {
         require(isGovernor(msg.sender), "Gov: Only Governor");
@@ -45,9 +44,8 @@ contract Governance is IERC2767 {
         _;
     }
 
-    constructor(address _scamm, address[] memory _governors, uint256[] memory _powers, uint256[2] memory _consensus) public {
+    constructor(address[] memory _governors, uint256[] memory _powers, uint256[2] memory _consensus) public {
         require(_governors.length == _powers.length, "Gov: Different input lengths");
-        scamm = ScammInterface(_scamm);
         uint256 _totalPower;
         
         governors = _governors;
@@ -92,8 +90,8 @@ contract Governance is IERC2767 {
         require(!transactions[_transactionId].executed, "Gov: Tx already executed");
         require(!confirmation[_transactionId][msg.sender], "Gov: Already confirmed");
 
-
         confirmation[_transactionId][msg.sender] = true;
+
         // TODO: use snapshot as voting power can change
         transactions[_transactionId].votes += powers[msg.sender]; 
 
@@ -187,7 +185,7 @@ contract Governance is IERC2767 {
             if (governors[i] == _existingGovernor) {
                 _index = i;
                 _exists = true;
-                // TODO: no "break" in solidity?
+                break;
             }
         }
 
@@ -213,9 +211,4 @@ contract Governance is IERC2767 {
                 this.required.selector ^
                 this.setGovernor.selector;
     }   
-}
-
-interface ScammInterface {
-    function addStable(address addr) external returns (bool);
-    function changeFee(uint newFeeRate) external returns (bool);
 }
