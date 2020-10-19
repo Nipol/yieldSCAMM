@@ -1,11 +1,12 @@
 <div class="container">
     <div class="inner">
-        <h1 class="title">Swap</h1>
+        <h1 class="title">{{Header}}</h1>
         <!-- <dsrv-input (value)="getAmount($event)" label="Near" balance="{{balance()}}" connect="{{connected()}}"> -->
         <!-- </dsrv-input> -->
         <!-- <dsrv-btn (clicked)="tokenize()" label="Swap Near for yNear"></dsrv-btn> -->
-        <ysc-text>Amount In</ysc-text>
-        <ysc-text>Amount Out</ysc-text>
-        <ysc-btn >SWAP</ysc-btn>
+        <ysc-text (value)="getInAmount($event)" balance="{{InBalance}}" connect="{{isConnected()}}">Amount In</ysc-text>
+        <ysc-text balance="{{OutBalance}}" connect="{{isConnected()}}">Amount Out</ysc-text>
+        <ysc-btn *ngIf="allowed" (clicked)="swap()">SWAP</ysc-btn>
+        <ysc-btn *ngIf="!allowed" (clicked)="approve()">yUSD approve(3 tx)</ysc-btn>
     </div>
 </div>

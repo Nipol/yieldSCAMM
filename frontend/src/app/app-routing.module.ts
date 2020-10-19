@@ -5,14 +5,22 @@ import { MintComponent } from './mint/mint.component';
 
 const routes: Routes = [
   {
-    path: 'swap',
-    component: SwapComponent
+    path: 'swapab',
+    component: SwapComponent,
+  },
+  {
+    path: 'swapbc',
+    component: SwapComponent,
+  },
+  {
+    path: 'swapca',
+    component: SwapComponent,
   },
   {
     path: 'mint',
     component: MintComponent
   },
-  { path: '', redirectTo: '/swap', pathMatch: 'full' },
+  { path: '', redirectTo: '/swapab', pathMatch: 'full' },
 ];
 
 @NgModule({

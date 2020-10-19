@@ -7,7 +7,6 @@ import { HeaderComponent } from './header/header.component';
 import { BtnComponent } from './btn/btn.component';
 import { SwapComponent } from './swap/swap.component';
 import { TextComponent } from './text/text.component';
-import { AddliquidityComponent } from './addliquidity/addliquidity.component';
 import { MintComponent } from './mint/mint.component';
 
 @NgModule({
@@ -17,7 +16,6 @@ import { MintComponent } from './mint/mint.component';
     BtnComponent,
     SwapComponent,
     TextComponent,
-    AddliquidityComponent,
     MintComponent
   ],
   imports: [

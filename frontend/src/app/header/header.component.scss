@@ -81,3 +81,87 @@ nav {
     }
   }
 }
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  width: 100%;
+  height: 40px;
+  background: #e2a2ad;
+
+  > .container {
+    display: flex;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    max-width: 960px;
+
+    > .label {
+      display: inline-block;
+      font-family: Roboto;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 9px;
+      /* identical to box height */
+
+      /* white */
+      color: #ffffff;
+      padding: 0 10px;
+      height: 9px;
+      border-right: 1px solid #302f2d;
+    }
+
+    > .uUSD {
+      padding: 0 10px;
+      display: inline-flex;
+      font-family: Roboto;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 13px;
+      line-height: 15px;
+      text-align: right;
+      color: #ffffff;
+
+      &::after {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 11px;
+        line-height: 15px;
+        /* identical to box height */
+        text-align: right;
+
+        /* p_80 */
+        color: #fffafa;
+        padding: 0 5px;
+        content: 'uUSD';
+      }
+    }
+
+    > .account {
+      padding-right: 3rem;
+      margin-left: auto;
+      font-family: Noto Sans KR;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      /* identical to box height */
+
+      /* white */
+      color: #ffffff;
+
+      > a:link,
+      a:visited,
+      a:hover {
+        color: #ffffff;
+        text-decoration: none;
+      }
+    }
+  }
+}
