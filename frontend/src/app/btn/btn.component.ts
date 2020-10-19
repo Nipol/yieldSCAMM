@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'ysc-btn',
@@ -7,9 +7,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BtnComponent implements OnInit {
 
+  @Output() clicked = new EventEmitter<boolean>();
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  onClick(event: any): void {
+    this.clicked.emit(true);
   }
 
 }

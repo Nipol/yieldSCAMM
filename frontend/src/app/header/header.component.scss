@@ -6,3 +6,47 @@
   margin-bottom: 2rem;
   background: #ffffff;
 }
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 90px;
+
+  > .container {
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    width: 100%;
+    max-width: 1920px;
+    height: 100%;
+    margin: 0 2rem;
+
+    > .left {
+      display: flex;
+      justify-content: space-around;
+      align-content: center;
+      align-items: center;
+
+      > h1 {
+        width: 100%;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 300;
+        font-size: 24px;
+        line-height: 28px;
+        text-align: center;
+
+        color: #e2a2ad;
+      }
+    }
+
+    > .right {
+      display: flex;
+      justify-content: space-around;
+      align-content: center;
+      align-items: center;
+    }
+  }
+}
