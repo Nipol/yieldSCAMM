@@ -8,8 +8,6 @@ import "./Interface/ICredit.sol";
 import "./Library/SafeMath.sol";
 import "./Library/Authority.sol";
 
-import "@nomiclabs/buidler/console.sol";
-
 contract SCAMM is Authority {
     using SafeMath for uint256;
 

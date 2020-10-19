@@ -14,8 +14,6 @@ import "./Library/Address.sol";
 import "./Library/Authority.sol";
 import "./Library/EIP712.sol";
 
-import "@nomiclabs/buidler/console.sol";
-
 contract ScaleToken is
     Authority,
     EIP712,

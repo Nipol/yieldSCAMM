@@ -13,7 +13,8 @@
     "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\"",
     "prettier": "prettier --write **/*.sol",
     "vertigo": "scripts/vertigo.sh",
-    "analyze": "slither ./contracts"
+    "analyze": "slither ./contracts",
+    "deploy:rinkeby": "npx buidler run --network rinkeby scripts/deploy.js"
   },
   "author": "yoonsung",
   "license": "ISC",
