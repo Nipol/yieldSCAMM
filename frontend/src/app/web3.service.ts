@@ -25,4 +25,16 @@ export class Web3Service {
     const contractWithSigner = this.contract.connect(this.signer);
     return contractWithSigner;
   }
+
+  isConnected(): boolean {
+    return this.provider ? true : false;
+  }
+
+  async getNetwork(): Promise<number> {
+    return await this.signer.getChainId();
+  }
+
+  async getAddress(): Promise<string> {
+    return await this.signer.getAddress();
+  }
 }

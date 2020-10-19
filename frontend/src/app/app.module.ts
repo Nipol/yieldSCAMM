@@ -5,12 +5,20 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { BtnComponent } from './btn/btn.component';
+import { SwapComponent } from './swap/swap.component';
+import { TextComponent } from './text/text.component';
+import { AddliquidityComponent } from './addliquidity/addliquidity.component';
+import { MintComponent } from './mint/mint.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    BtnComponent
+    BtnComponent,
+    SwapComponent,
+    TextComponent,
+    AddliquidityComponent,
+    MintComponent
   ],
   imports: [
     BrowserModule,

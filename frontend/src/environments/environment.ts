@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   NetworkId: 4,
-  SCAMMAddress: '',
+  SCAMMAddress: '0x44C6C3360ddc6b6D57dA89fF14e584196b34F977',
   SCAMMAbis: [
     {
       "inputs": [
@@ -315,7 +315,7 @@ export const environment = {
       "type": "function"
     }
   ],
-  ScaleTokenAddress: '',
+  ScaleTokenAddress: '0xaa13a4C86C410f97756fE0d76d07FB644feB2799',
   ScaleTokenAbis: [
     {
       "anonymous": false,

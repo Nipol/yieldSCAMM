@@ -42,6 +42,37 @@ nav {
       }
     }
 
+    > .middle {
+      display: flex;
+      width: 500px;
+      justify-content: space-around;
+      align-content: center;
+      align-items: center;
+      > a {
+        display: flex;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 23px;
+        /* identical to box height */
+        text-align: center;
+
+        /* f_dgray */
+        color: #5f6877;
+        text-decoration: none;
+        &:link,
+        &:visited,
+        &hover {
+          text-decoration: none;
+        }
+
+        &.active {
+          color: #1c2432;
+        }
+      }
+    }
+
     > .right {
       display: flex;
       justify-content: space-around;

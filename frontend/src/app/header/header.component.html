@@ -4,14 +4,13 @@
             <h1>yieldSCAMM</h1>
         </div>
         <div class="middle">
-            <!-- <a routerLink="/swap" routerLinkActive="active">Swap</a>
+            <a routerLink="/swap" routerLinkActive="active">Swap</a>
             <a routerLink="/mint" routerLinkActive="active">Mint</a>
-            <a routerLink="/faucet" routerLinkActive="active">yToken Faucet</a> -->
+            <a routerLink="/faucet" routerLinkActive="active">yToken Faucet</a>
         </div>
         <div class="right">
-            <ysc-btn>Connect Wallet</ysc-btn>
-            <!-- <button *ngIf="!connected()" (click)="connectWallet()">Connect Wallet</button>
-            <button *ngIf="connected()" (click)="disconnectWallet()">Disconnect Wallet</button> -->
+            <ysc-btn *ngIf="!isConnected()" (clicked)="connectWallet()">Connect Wallet</ysc-btn>
+            <label *ngIf="isConnected()">Connected</label>
         </div>
     </div>
 </nav>
