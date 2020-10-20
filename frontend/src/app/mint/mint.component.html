@@ -4,10 +4,10 @@
         <!-- <dsrv-input (value)="getAmount($event)" label="Near" balance="{{balance()}}" connect="{{connected()}}"> -->
         <!-- </dsrv-input> -->
         <!-- <dsrv-btn (clicked)="tokenize()" label="Swap Near for yNear"></dsrv-btn> -->
-        <ysc-text (value)="getyUSDAAmount($event)" balance="{{yUSDABalance}}" connect="{{isConnected()}}">Amount yUSDA</ysc-text>
-        <ysc-text (value)="getyUSDBAmount($event)" balance="{{yUSDBBalance}}" connect="{{isConnected()}}">Amount yUSDB</ysc-text>
-        <ysc-text (value)="getyUSDCAmount($event)" balance="{{yUSDCBalance}}" connect="{{isConnected()}}">Amount yUSDC</ysc-text>
-        <ysc-btn *ngIf="allowed" (clicked)="deposit()">Mint</ysc-btn>
-        <ysc-btn *ngIf="!allowed" (clicked)="approve()">yUSD approve(3 tx)</ysc-btn>
+        <ysc-text (value)="getyUSDAAmount($event)" balance="{{yUSDABalance}}" connect="{{isConnected()}}">Amount uUSD-OCT</ysc-text>
+        <ysc-text (value)="getyUSDBAmount($event)" balance="{{yUSDBBalance}}" connect="{{isConnected()}}">Amount uUSD-NOV</ysc-text>
+        <ysc-text (value)="getyUSDCAmount($event)" balance="{{yUSDCBalance}}" connect="{{isConnected()}}">Amount uUSD-DEC</ysc-text>
+        <ysc-btn *ngIf="allowed" (clicked)="deposit()">Add Liquidity</ysc-btn>
+        <ysc-btn *ngIf="!allowed" (clicked)="approve()">Approve uUSD (3 times)</ysc-btn>
     </div>
 </div>

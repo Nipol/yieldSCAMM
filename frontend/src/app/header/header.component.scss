@@ -44,7 +44,7 @@ nav {
 
     > .middle {
       display: flex;
-      width: 500px;
+      width: 900px;
       justify-content: space-around;
       align-content: center;
       align-items: center;
@@ -139,14 +139,14 @@ nav {
         /* p_80 */
         color: #fffafa;
         padding: 0 5px;
-        content: 'uUSD';
+        content: 'uuUSD';
       }
     }
 
     > .account {
       padding-right: 3rem;
       margin-left: auto;
-      font-family: Noto Sans KR;
+      font-family: Roboto;
       font-style: normal;
       font-weight: 500;
       font-size: 14px;

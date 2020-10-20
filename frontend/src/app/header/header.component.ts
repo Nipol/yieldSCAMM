@@ -28,7 +28,8 @@ export class HeaderComponent implements OnInit {
 
   async refreshBalance(): Promise<void> {
     this.ScaleToken = await this.web3.makeContract(environment.ERC20Abis, environment.ScaleTokenAddress);
-    this.ScaleTokenBalance = await this.ScaleToken.methods.balanceOf(this.web3.account).call();
+    const ScaleTokenBalance = await this.ScaleToken.methods.balanceOf(this.web3.account).call();
+    this.ScaleTokenBalance = `${ScaleTokenBalance.slice(0, ScaleTokenBalance.length - 18)}.${ScaleTokenBalance.slice(-18)}`;
   }
 
   isConnected(): boolean {
