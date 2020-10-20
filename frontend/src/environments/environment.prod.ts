@@ -4,7 +4,7 @@ export const environment = {
   yUSDAAddress: '0x2f2d1790ae082d1847e9c4eefb58bd311f6ff886',
   yUSDBAddress: '0xca529bd64d95d56615e3aecbf3aeb1be899a5090',
   yUSDCAddress: '0x8bf346384ae2232077ccb596c48b8b934aa4177a',
-  SCAMMAddress: '0x44C6C3360ddc6b6D57dA89fF14e584196b34F977',
+  SCAMMAddress: '0xc1BAF3860781a461C9F3F5032196f45dbc50476e',
   SCAMMAbis: [
     {
       "inputs": [
@@ -301,7 +301,7 @@ export const environment = {
       "type": "function"
     }
   ],
-  ScaleTokenAddress: '0xaa13a4C86C410f97756fE0d76d07FB644feB2799',
+  ScaleTokenAddress: '0x1B2eEb436757586E38cc80CC411C5324F2C6Ea92',
   ERC20Abis: [
     {
       "anonymous": false,

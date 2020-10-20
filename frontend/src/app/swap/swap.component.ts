@@ -47,7 +47,7 @@ export class SwapComponent implements OnInit {
     }
     this.SCAMM = await this.web3.makeContract(environment.SCAMMAbis, environment.SCAMMAddress);
 
-    await this.refreshBalance();
+    setInterval(() => this.refreshBalance(), 1000);
   }
 
   async refreshBalance(): Promise<void> {
@@ -56,11 +56,10 @@ export class SwapComponent implements OnInit {
     const allowance = await this.InContract.methods.allowance(this.web3.account, environment.SCAMMAddress).call();
     this.allowed = allowance.length > 26;
 
-    console.log(this.AmountIn?.length);
-    if (this.AmountIn?.length > 0) {
+    if (this.AmountIn) {
       const inaddress = this.InContract._address;
-      this.AmountOut = await this.SCAMM.methods.getAmountOut(inaddress, this.AmountIn);
-      console.log(this.AmountOut);
+      const outaddress = this.OutContract._address;
+      this.AmountOut = await this.SCAMM.methods.getAmountOut(inaddress, this.AmountIn, outaddress).call();
     }
   }
 
@@ -73,7 +72,9 @@ export class SwapComponent implements OnInit {
   }
 
   async swap(): Promise<void> {
-
+    const inaddress = this.InContract._address;
+    const outaddress = this.OutContract._address;
+    await this.SCAMM.methods.swap(inaddress, this.AmountIn, outaddress).send();
   }
 
   isConnected(): boolean {

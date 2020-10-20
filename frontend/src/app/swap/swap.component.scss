@@ -9,7 +9,6 @@
   display: flex;
   justify-content: center;
   align-content: center;
-  height: 100%;
 
   > .inner {
     margin: 2rem 2rem;
@@ -24,6 +23,99 @@
       display: flex;
       justify-content: center;
       align-content: center;
+    }
+
+    > .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-content: center;
+      width: 100%;
+
+      > .info {
+        display: flex;
+        justify-content: flex-start;
+        align-content: center;
+        width: 100%;
+
+        > .name {
+          font-family: Roboto;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 23px;
+          /* identical to box height */
+          letter-spacing: -0.03em;
+
+          color: #1c2432;
+        }
+
+        > .balance {
+          font-family: Roboto;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 13px;
+          line-height: 17px;
+          /* identical to box height */
+          letter-spacing: -0.02em;
+
+          margin-left: auto;
+          color: #5f6877;
+
+          &::before {
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 11px;
+            line-height: 17px;
+            /* identical to box height, or 155% */
+            text-align: center;
+            letter-spacing: -0.03em;
+
+            /* f_gray */
+            color: #8b8f97;
+            content: 'Balance ';
+          }
+
+          &::after {
+            font-family: Roboto;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 17px;
+            /* identical to box height */
+            text-align: center;
+            letter-spacing: -0.04em;
+
+            /* f_gray */
+            color: #8b8f97;
+            content: ' ' attr(data-after);
+          }
+        }
+      }
+
+      > input {
+        display: flex;
+        /* bg_basic */
+
+        background: #fffafa;
+        border: 1px solid #e5e5e5;
+        border-radius: 5px;
+        box-sizing: border-box;
+        height: 55px;
+        padding: 1rem;
+
+        color: #1c2432;
+
+        &:focus {
+          border: 1px solid #e2a2ad;
+          color: #e2a2ad;
+        }
+
+        &::placeholder {
+          color: #b5b8bd;
+        }
+      }
     }
 
     // > ysc-btn {
