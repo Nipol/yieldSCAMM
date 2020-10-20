@@ -1,0 +1,13 @@
+<div class="container">
+    <div class="inner">
+        <h1 class="title">Pool</h1>
+        <!-- <dsrv-input (value)="getAmount($event)" label="Near" balance="{{balance()}}" connect="{{connected()}}"> -->
+        <!-- </dsrv-input> -->
+        <!-- <dsrv-btn (clicked)="tokenize()" label="Swap Near for yNear"></dsrv-btn> -->
+        <ysc-text (value)="getyUSDAAmount($event)" balance="{{yUSDABalance}}" connect="{{isConnected()}}">Amount yUSDA</ysc-text>
+        <ysc-text (value)="getyUSDBAmount($event)" balance="{{yUSDBBalance}}" connect="{{isConnected()}}">Amount yUSDB</ysc-text>
+        <ysc-text (value)="getyUSDCAmount($event)" balance="{{yUSDCBalance}}" connect="{{isConnected()}}">Amount yUSDC</ysc-text>
+        <ysc-btn *ngIf="allowed" (clicked)="deposit()">Mint</ysc-btn>
+        <ysc-btn *ngIf="!allowed" (clicked)="approve()">yUSD approve(3 tx)</ysc-btn>
+    </div>
+</div>

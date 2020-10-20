@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  margin: 1rem;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+
+  border: 1px solid #e2a2ad;
+  box-sizing: border-box;
+  border-radius: 50px;
+
+  > button {
+    width: 100%;
+    height: 100%;
+
+    /* white */
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+
+    color: #e2a2ad;
+
+    background: none;
+    border-radius: 6px;
+    border: none;
+    padding: 1rem 1.3rem;
+  }
+}

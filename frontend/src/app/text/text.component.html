@@ -1,0 +1,7 @@
+<div class="container">
+    <div class="info">
+        <label class="name"><ng-content></ng-content></label>
+        <label *ngIf="connected" class="balance" [attr.data-after]="label">{{balance}}</label>
+    </div>
+    <input (keyup)="onKeyup($event)" placeholder="0.0">
+</div>

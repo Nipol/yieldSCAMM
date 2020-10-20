@@ -251,7 +251,7 @@ contract SCAMM is Authority {
         amountOut = numerator.div(denominator);
     }
 
-    function weightedCollateral() public view returns (uint256 collateral) {
+    function weightedCollateral() private view returns (uint256 collateral) {
         address[] memory tmpStables = stables;
         uint256 realBalance = 0;
         uint256 dividedBalance = 0;

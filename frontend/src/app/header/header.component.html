@@ -1,0 +1,25 @@
+<nav>
+    <div class="container">
+        <div class="left">
+            <h1>yieldSCAMM</h1>
+        </div>
+        <div class="middle">
+            <a routerLink="/swapab" routerLinkActive="active">Swap A to B</a>
+            <a routerLink="/swapbc" routerLinkActive="active">Swap B to C</a>
+            <a routerLink="/swapca" routerLinkActive="active">Swap C to A</a>
+            <a routerLink="/mint" routerLinkActive="active">Pool</a>
+            <!-- <a routerLink="/faucet" routerLinkActive="active">yToken Faucet</a> -->
+        </div>
+        <div class="right">
+            <ysc-btn *ngIf="!isConnected()" (clicked)="connectWallet()">Connect Wallet</ysc-btn>
+            <label *ngIf="isConnected()">{{account}}</label>
+        </div>
+    </div>
+</nav>
+
+<div *ngIf="isConnected()" class="info">
+    <div class="container">
+        <span class="label">Balance</span>
+        <span class="uUSD">{{ ScaleTokenBalance }}</span>
+    </div>
+</div>
