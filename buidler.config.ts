@@ -26,10 +26,12 @@ export default {
     coverage: {
       url: 'http://localhost:8555',
     },
-    //   rinkeby: {
-    //     url: "https://rinkeby.infura.io/v3/123abc123abc123abc123abc123abcde",
-    //     accounts: [privateKey1, privateKey2, ...]
-    //   }
+    rinkeby: {
+      url: "https://1edceef03e4f4369851b642651d48baf.rinkeby.rpc.rivet.cloud/",
+      accounts: ['pk1'],
+      gasPrice: 8000000000,
+      timeout: 500000
+    }
   },
   solc: {
     version: '0.6.12',
