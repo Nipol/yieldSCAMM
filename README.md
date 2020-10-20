@@ -25,6 +25,7 @@ We anticipate yieldSCAMM can be applied to include other asset classes as well l
 - Researching how to leverage arbitrage opportunities to provide additional yields to LPs
 
 ## Demo Video
+[![IMAGE ALT TEXT HERE](https://yt-embed.herokuapp.com/embed?v=oF2x3PgVa0g)](https://www.youtube.com/watch?v=oF2x3PgVa0g "yieldSCAMM DEMO")
 
 ## Using Protocol
 
