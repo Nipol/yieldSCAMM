@@ -29,8 +29,8 @@ We anticipate yieldSCAMM can be applied to include other asset classes as well l
 
 ## Using Protocol
 
-- ENS - Front-End를 Serving 할 때, 접근하기 쉬운 URL 인터페이스로 사용하고 있습니다.
-- IPFS - Front-End 코드를 서빙하고 있습니다.
-- UMA Protocol - 만기가 존재하는 uUSD를 AMM에 담을 수 있는 용도로 사용합니다. AMM에 들어있는 uUSD가 만기되면, uUSD를 UMA로 되돌려 담보를 출금합니다. 담보는 Uniswap과 같은 AMM을 통하여 USD//C로 교환되어 Reserve Contract에 예치됩니다.
-- USD//C - uUSD와 동일하게 AMM에 담을 수 있는 자산으로 사용됩니다.
+- ENS - Frontend를 Serving 할 때, 접근하기 쉬운 URL 인터페이스로 사용하고 있습니다.
+- IPFS - Frontend를 직접적으로 Serving하고 있습니다.
+- UMA Protocol - 만기가 존재하는 uUSD를 AMM에 담을 수 있는 용도로 사용합니다. AMM에 들어있는 uUSD가 만기되면, Governance는 uUSD를 UMA로 되돌려 담보를 출금합니다. 담보는 Uniswap과 같은 AMM을 통하여 USD//C로 교환되어 Reserve Contract에 예치됩니다.
+- USD//C - uUSD와 동일하게 AMM에 담을 수 있는 자산으로 사용됩니다. uUSD를 USD//C로 교환하거나 USD//C를 uUSD들로 교환할 수 있습니다
 - Aave, Compound - Reserve Contract에 예치된 USD//C는 Aave 또는 Compound로 예치되어 LPToken의 수량을 지속적으로 상승시키는 역할을 합니다.
