@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { Web3Service } from '../web3.service';
+import * as BN from 'bn.js';
 
 @Component({
   selector: 'ysc-swap',
@@ -28,19 +29,19 @@ export class SwapComponent implements OnInit {
     const token = this.route.url;
     switch (token) {
       case '/swapab':
-        this.Header = 'Swap A to B';
+        this.Header = 'Swap uUSD-OCT for uUSD-NOV';
         this.InContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDAAddress);
         this.OutContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDBAddress);
         break;
 
       case '/swapbc':
-        this.Header = 'Swap B to C';
+        this.Header = 'Swap uUSD-NOV for uUSD-DEC';
         this.InContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDBAddress);
         this.OutContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDCAddress);
         break;
 
       case '/swapca':
-        this.Header = 'Swap C to A';
+        this.Header = 'Swap uUSD-DEC for uUSD-OCT';
         this.InContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDCAddress);
         this.OutContract = await this.web3.makeContract(environment.ERC20Abis, environment.yUSDAAddress);
         break;
@@ -51,15 +52,18 @@ export class SwapComponent implements OnInit {
   }
 
   async refreshBalance(): Promise<void> {
-    this.InBalance = await this.InContract.methods.balanceOf(this.web3.account).call();
-    this.OutBalance = await this.OutContract.methods.balanceOf(this.web3.account).call();
+    const InBalance = await this.InContract.methods.balanceOf(this.web3.account).call();
+    this.InBalance = new BN(InBalance).div(new BN('1000000000000000000')).toString();
+    const OutBalance = await this.OutContract.methods.balanceOf(this.web3.account).call();
+    this.OutBalance = new BN(OutBalance).div(new BN('1000000000000000000')).toString();
     const allowance = await this.InContract.methods.allowance(this.web3.account, environment.SCAMMAddress).call();
     this.allowed = allowance.length > 26;
 
     if (this.AmountIn) {
       const inaddress = this.InContract._address;
       const outaddress = this.OutContract._address;
-      this.AmountOut = await this.SCAMM.methods.getAmountOut(inaddress, this.AmountIn, outaddress).call();
+      const AmountOut = await this.SCAMM.methods.getAmountOut(inaddress, this.AmountIn, outaddress).call();
+      this.AmountOut = new BN(AmountOut).div(new BN('1000000000000000000')).toString();
     }
   }
 
@@ -68,7 +72,7 @@ export class SwapComponent implements OnInit {
   }
 
   getInAmount(amount: string): void {
-    this.AmountIn = amount;
+    this.AmountIn = new BN(amount).mul(new BN('1000000000000000000')).toString();
   }
 
   async swap(): Promise<void> {
