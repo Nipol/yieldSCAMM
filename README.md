@@ -35,6 +35,7 @@ We anticipate yieldSCAMM can be applied to include other asset classes as well l
 * [yieldSCAMM.eth](http://yieldscamm.eth)
 * [yieldSCAMM from cloudflare](https://cloudflare-ipfs.com/ipfs/QmYvMSx3rdqFmqo7ED5WqvXYB9BMSb88yxXLCdAvytzDGL)
 * [yieldSCAMM from ipfs.io](https://ipfs.io/ipfs/QmYvMSx3rdqFmqo7ED5WqvXYB9BMSb88yxXLCdAvytzDGL)
+
 _If you want to test it, please leave your rinkby address as an issue. I'll send you a token._
 
 ## Demo Video
