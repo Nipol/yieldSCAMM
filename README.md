@@ -20,6 +20,8 @@ This is where yieldSCAMM comes in. yieldSCAMM is an AMM that pools any uUSD allo
 
 Another mechanism that yieldSCAMM introduces is how the LP tokens are maintained. The LP tokens are meant to retain a peg to $1 rather than letting the LP token’s value to float. The LP tokens will consistently rebase to reflect the US dollar value of the pooled tokens in the AMM.
 
+Eventually the LP token will be backed by uUSD of multiple maturities with some eventually expiring. At date of maturity, the expiring uUSD will be automatically used to claim locked up collateral. The collateral will be instantaneously traded for USDC to store in a Reserve Contract. USDC in the Reserve Contract will be deposited on Compound or Aave to accrue interest.
+
 We anticipate yieldSCAMM can be applied to include other asset classes as well like on-chain options and futures.
 
 **Future work required**
