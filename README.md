@@ -1,3 +1,5 @@
+<img align="right" width="100" height="100" src="https://user-images.githubusercontent.com/693461/96717178-08bb6400-13e1-11eb-9362-b5319c4a6b0c.png">
+
 # yieldSCAMM
 
 *In a world of scams, yieldSCAMM brings liquidity to non-fungible tokens within the same asset class, starting from UMA’s yield dollars.*
