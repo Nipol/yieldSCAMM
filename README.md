@@ -29,6 +29,14 @@ We anticipate yieldSCAMM can be applied to include other asset classes as well l
 * Improving governance such that regular maintenance on yieldSCAMM can be conducted seamlessly
 * Researching how to leverage arbitrage opportunities to provide additional yields to LPs
 
+## Demo URL
+* [yieldSCAMM.eth](http://yieldscamm.eth)
+* [yieldSCAMM from cloudflare](https://cloudflare-ipfs.com/ipfs/QmYvMSx3rdqFmqo7ED5WqvXYB9BMSb88yxXLCdAvytzDGL)
+* [yieldSCAMM from ipfs.io](https://ipfs.io/ipfs/QmYvMSx3rdqFmqo7ED5WqvXYB9BMSb88yxXLCdAvytzDGL)
+
+## Demo Video
+[![IMAGE ALT TEXT HERE](https://yt-embed.herokuapp.com/embed?v=oF2x3PgVa0g)](https://www.youtube.com/watch?v=oF2x3PgVa0g "yieldSCAMM DEMO")
+
 ## Components of yieldSCAMM
 * ENS: ENS URLs have become an easier way to interact with DApps and therefore we have opted to use [yieldscamm.eth](yieldscamm.eth) for the access point to our front end.
 * IPFS: IPFS is serving the actual front end code.
