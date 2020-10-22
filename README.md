@@ -39,7 +39,7 @@ We anticipate yieldSCAMM can be applied to include other asset classes as well l
 _If you want to test it, please leave your rinkby address as an issue. I'll send you a token._
 
 ## Demo Video
-[![IMAGE ALT TEXT HERE](https://yt-embed.herokuapp.com/embed?v=oF2x3PgVa0g)](https://www.youtube.com/watch?v=oF2x3PgVa0g "yieldSCAMM DEMO")
+[![IMAGE ALT TEXT HERE](https://yt-embed.herokuapp.com/embed?v=oF2x3PgVa0g)](https://youtu.be/GWFuzcj4OBE "yieldSCAMM DEMO")
 
 ## Components of yieldSCAMM
 * ENS: ENS URLs have become an easier way to interact with DApps and therefore we have opted to use [yieldscamm.eth](yieldscamm.eth) for the access point to our front end.
