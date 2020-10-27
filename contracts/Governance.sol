@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-3.0-or-later
 pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 
@@ -44,12 +45,19 @@ contract Governance is IERC2767 {
         _;
     }
 
-    constructor(address[] memory _governors, uint256[] memory _powers, uint256[2] memory _consensus) public {
-        require(_governors.length == _powers.length, "Gov: Different input lengths");
+    constructor(
+        address[] memory _governors,
+        uint256[] memory _powers,
+        uint256[2] memory _consensus
+    ) public {
+        require(
+            _governors.length == _powers.length,
+            "Gov: Different input lengths"
+        );
         uint256 _totalPower;
-        
+
         governors = _governors;
-        for (uint256 i=0; i<_governors.length; i++) {
+        for (uint256 i = 0; i < _governors.length; i++) {
             powers[_governors[i]] = _powers[i];
             _totalPower += _powers[i];
             emit GovernorPowerUpdated(_governors[i], _powers[i]);
@@ -87,13 +95,19 @@ contract Governance is IERC2767 {
 
     function confirmTransaction(uint256 _transactionId) public onlyGovernor {
         require(_transactionId < transactions.length, "Gov: Tx doesn't exist");
-        require(!transactions[_transactionId].executed, "Gov: Tx already executed");
-        require(!confirmation[_transactionId][msg.sender], "Gov: Already confirmed");
+        require(
+            !transactions[_transactionId].executed,
+            "Gov: Tx already executed"
+        );
+        require(
+            !confirmation[_transactionId][msg.sender],
+            "Gov: Already confirmed"
+        );
 
         confirmation[_transactionId][msg.sender] = true;
 
         // TODO: use snapshot as voting power can change
-        transactions[_transactionId].votes += powers[msg.sender]; 
+        transactions[_transactionId].votes += powers[msg.sender];
 
         if (isTransactionConfirmed(_transactionId)) {
             executeTransaction(_transactionId);
@@ -103,44 +117,66 @@ contract Governance is IERC2767 {
     /// @notice Calls the governed contract to perform administrative task
     /// @param _transactionId Transaction ID
     function executeTransaction(uint256 _transactionId) public onlyGovernor {
-        require(!transactions[_transactionId].executed, "Gov: Tx already executed");
-        require(isTransactionConfirmed(_transactionId), "Gov: Consensus not achieved");
+        require(
+            !transactions[_transactionId].executed,
+            "Gov: Tx already executed"
+        );
+        require(
+            isTransactionConfirmed(_transactionId),
+            "Gov: Consensus not achieved"
+        );
 
         bytes memory callData;
 
-        if(bytes(transactions[_transactionId].signature).length == 0) {
+        if (bytes(transactions[_transactionId].signature).length == 0) {
             callData = transactions[_transactionId].data;
         } else {
-            callData = abi.encodePacked(bytes4(keccak256(bytes(
-                transactions[_transactionId].signature))), transactions[_transactionId].data);
+            callData = abi.encodePacked(
+                bytes4(
+                    keccak256(bytes(transactions[_transactionId].signature))
+                ),
+                transactions[_transactionId].data
+            );
         }
 
-        (bool _success, ) = transactions[_transactionId].destination.call {
+        (bool _success, ) = transactions[_transactionId].destination.call{
             value: transactions[_transactionId].value
         }(callData);
-        
+
         require(_success, "Gov: Call was reverted");
-        
+
         transactions[_transactionId].executed = true;
     }
 
-    function isTransactionConfirmed(uint256 _transactionId) internal view returns (bool) {
+    function isTransactionConfirmed(uint256 _transactionId)
+        internal
+        view
+        returns (bool)
+    {
         return transactions[_transactionId].votes >= required();
     }
 
-    function getTransaction(uint256 _transactionId) public view returns (Transaction memory) {
+    function getTransaction(uint256 _transactionId)
+        public
+        view
+        returns (Transaction memory)
+    {
         return transactions[_transactionId];
     }
 
-    function required() public override view returns (uint256) {
-        if (consensus[1] == 0) { // when there's no denominator.
+    function required() public view override returns (uint256) {
+        if (consensus[1] == 0) {
+            // when there's no denominator.
             return consensus[0];
         } else {
             return (consensus[0] * totalPower) / consensus[1] + 1;
         }
     }
 
-    function setRequired(uint256 _numerator, uint256 _denominator) public onlyGovernance {
+    function setRequired(uint256 _numerator, uint256 _denominator)
+        public
+        onlyGovernance
+    {
         consensus[0] = _numerator;
         consensus[1] = _denominator;
     }
@@ -149,17 +185,22 @@ contract Governance is IERC2767 {
         return governors;
     }
 
-
     /// @notice Updates governor statuses
     /// @param _governor Governor address
     /// @param _newPower New power for the governor
     /// @dev Only Governance can call
-    function setGovernor(address _governor, uint256 _newPower) public override onlyGovernance {
-        if (powers[_governor] == 0) { // new governor
+    function setGovernor(address _governor, uint256 _newPower)
+        public
+        override
+        onlyGovernance
+    {
+        if (powers[_governor] == 0) {
+            // new governor
             governors.push(_governor);
             powers[_governor] = _newPower;
             emit GovernorPowerUpdated(_governor, _newPower);
-        } else { // update existing governor
+        } else {
+            // update existing governor
             powers[_governor] = _newPower;
             emit GovernorPowerUpdated(_governor, _newPower);
         }
@@ -170,7 +211,7 @@ contract Governance is IERC2767 {
     }
 
     function isGovernor(address _governor) public view returns (bool) {
-        for (uint256 i=0; i<governors.length; i++) {
+        for (uint256 i = 0; i < governors.length; i++) {
             if (governors[i] == _governor) {
                 return true;
             }
@@ -181,7 +222,7 @@ contract Governance is IERC2767 {
     function removeGovernor(address _existingGovernor) public onlyGovernance {
         uint256 _index;
         bool _exists;
-        for (uint256 i=0; i<governors.length; i++) {
+        for (uint256 i = 0; i < governors.length; i++) {
             if (governors[i] == _existingGovernor) {
                 _index = i;
                 _exists = true;
@@ -199,16 +240,25 @@ contract Governance is IERC2767 {
     /// @notice Gets the consensus power of the governor
     /// @param _governor Address of the governor
     /// @return The governor's voting power
-    function powerOf(address _governor) external override view returns (uint256) {
+    function powerOf(address _governor)
+        external
+        view
+        override
+        returns (uint256)
+    {
         return powers[_governor];
     }
 
-    function supportsInterface(bytes4 interfaceID) external pure returns (bool) {
+    function supportsInterface(bytes4 interfaceID)
+        external
+        pure
+        returns (bool)
+    {
         return
             interfaceID ==
             this.powerOf.selector ^
                 this.totalPower.selector ^
                 this.required.selector ^
                 this.setGovernor.selector;
-    }   
+    }
 }
